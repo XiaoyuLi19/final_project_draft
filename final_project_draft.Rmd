@@ -1,0 +1,64 @@
+---
+title: "Final Project Draft"
+author: Xiaoyu Li
+output: github_document
+---
+
+
+```{r setup}
+library(tidyverse)
+library(readxl)
+library(patchwork)
+
+knitr::opts_chunk$set(
+  fig.width = 8,
+  fig.asp = .6,
+  fig.height = 8,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+
+## Import the crime data
+```{r}
+crime_df = 
+  read_xls(
+  "./data/seven-major-felony-offenses-by-precinct-2000-2019.xls",
+  range = "B3:V619") %>% 
+  filter(CRIME == "TOTAL SEVEN MAJOR FELONY OFFENSES")
+
+pct_df =
+  read_xls(
+  "./data/seven-major-felony-offenses-by-precinct-2000-2019.xls",
+  range = "A3:A619") %>% 
+  drop_na(PCT)
+
+
+total_crime_df =
+  crime_df %>% 
+  mutate(PCT = pct_df$PCT) %>% 
+  select(PCT, "2013":"2019") %>% 
+  pivot_longer("2013":"2019", names_to = "year", values_to = "total_crime") %>%
+  mutate(borough = case_when(
+    PCT <= 34 ~ "Manhattan",
+    between(PCT, 40, 52) ~ "Bronx",
+    between(PCT, 60, 94) ~ "Brooklyn",
+    between(PCT, 100, 115) ~ "Queens",
+    between(PCT, 120, 123) ~ "Staten Island"
+  )) %>%
+  group_by(borough) %>% 
+  summarize(total_crime = sum(total_crime))
+
+  
+```
+
