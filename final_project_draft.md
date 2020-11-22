@@ -72,3 +72,5 @@ total_crime_df =
 ```
 
     ## `summarise()` regrouping output by 'borough' (override with `.groups` argument)
+
+*“total\_crime” is the total number of 7 major felonies*
