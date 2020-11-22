@@ -1,12 +1,23 @@
----
-title: "Final Project Draft"
-author: Xiaoyu Li
-output: github_document
----
+Final Project Draft
+================
+Xiaoyu Li
 
-
-```{r setup}
+``` r
 library(tidyverse)
+```
+
+    ## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+
+    ## v ggplot2 3.3.2     v purrr   0.3.4
+    ## v tibble  3.0.3     v dplyr   1.0.2
+    ## v tidyr   1.1.2     v stringr 1.4.0
+    ## v readr   1.3.1     v forcats 0.5.0
+
+    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
 library(readxl)
 library(patchwork)
 
@@ -28,9 +39,9 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-
 ## Import the crime data
-```{r}
+
+``` r
 crime_df = 
   read_xls(
   "./data/seven-major-felony-offenses-by-precinct-2000-2019.xls",
@@ -58,7 +69,6 @@ total_crime_df =
   )) %>%
   group_by(borough, year) %>% 
   summarize(total_crime = sum(total_crime))
-
-  
 ```
 
+    ## `summarise()` regrouping output by 'borough' (override with `.groups` argument)
