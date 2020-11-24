@@ -63,3 +63,18 @@ total_crime_df =
 ```
 
 *"total_crime" is the total number of 7 major felonies*
+
+Import census data
+
+```{r}
+census_df = 
+  read_csv("./data/Census_Demographics_at_the_Neighborhood_Tabulation_Area__NTA__level.csv") %>% 
+  select("Geographic Area - Borough", "Total Population 2010 Number") %>% 
+  rename(borough = "Geographic Area - Borough",
+         population_2010 = "Total Population 2010 Number"
+  ) %>% 
+  group_by(borough) %>% 
+  summarize(population_2010 = sum(population_2010)) %>% 
+  drop_na(population_2010)
+```
+
