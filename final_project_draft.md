@@ -21,6 +21,7 @@ library(tidyverse)
 library(readxl)
 library(patchwork)
 
+
 knitr::opts_chunk$set(
   fig.width = 8,
   fig.asp = .6,
@@ -73,4 +74,47 @@ total_crime_df =
 
     ## `summarise()` regrouping output by 'borough' (override with `.groups` argument)
 
+``` r
+write.csv(total_crime_df, "./data/total_crime.csv")
+```
+
 *“total\_crime” is the total number of 7 major felonies*
+
+Import census data
+
+``` r
+census_df = 
+  read_csv("./data/Census_Demographics_at_the_Neighborhood_Tabulation_Area__NTA__level.csv") %>% 
+  select("Geographic Area - Borough", "Total Population 2010 Number") %>% 
+  rename(borough = "Geographic Area - Borough",
+         population_2010 = "Total Population 2010 Number"
+  ) %>% 
+  group_by(borough) %>% 
+  summarize(population_2010 = sum(population_2010)) %>% 
+  drop_na(population_2010)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   `Geographic Area - Borough` = col_character(),
+    ##   `Geographic Area - 2010 Census FIPS County Code` = col_double(),
+    ##   `Geographic Area - Neighborhood Tabulation Area (NTA)* Code` = col_character(),
+    ##   `Geographic Area - Neighborhood Tabulation Area (NTA)* Name` = col_character(),
+    ##   `Total Population 2000 Number` = col_double(),
+    ##   `Total Population 2010 Number` = col_double(),
+    ##   `Total Population Change 2000-2010 Number` = col_double(),
+    ##   `Total Population Change 2000-2010 Percent` = col_double()
+    ## )
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
+write.csv(census_df, "./data/census.csv")
+```
+
+``` r
+urlfile = "https://raw.githubusercontent.com/yw3436/p8105_final.github.io/main/data/hiv_complete.csv"
+
+hiv_df = 
+  read.csv(url(urlfile))
+```

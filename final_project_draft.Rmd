@@ -10,6 +10,7 @@ library(tidyverse)
 library(readxl)
 library(patchwork)
 
+
 knitr::opts_chunk$set(
   fig.width = 8,
   fig.asp = .6,
@@ -59,10 +60,11 @@ total_crime_df =
   group_by(borough, year) %>% 
   summarize(total_crime = sum(total_crime))
 
-  
+write.csv(total_crime_df, "./data/total_crime.csv")
 ```
 
 *"total_crime" is the total number of 7 major felonies*
+
 
 Import census data
 
@@ -76,5 +78,16 @@ census_df =
   group_by(borough) %>% 
   summarize(population_2010 = sum(population_2010)) %>% 
   drop_na(population_2010)
+
+write.csv(census_df, "./data/census.csv")
+```
+
+
+
+```{r}
+urlfile = "https://raw.githubusercontent.com/yw3436/p8105_final.github.io/main/data/hiv_complete.csv"
+
+hiv_df = 
+  read.csv(url(urlfile))
 ```
 
