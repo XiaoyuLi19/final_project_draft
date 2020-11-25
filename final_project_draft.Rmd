@@ -9,7 +9,7 @@ output: github_document
 library(tidyverse)
 library(readxl)
 library(patchwork)
-
+library(plotly)
 
 knitr::opts_chunk$set(
   fig.width = 8,
@@ -58,7 +58,8 @@ total_crime_df =
     between(PCT, 120, 123) ~ "Staten Island"
   )) %>%
   group_by(borough, year) %>% 
-  summarize(total_crime = sum(total_crime))
+  summarize(total_crime = sum(total_crime)) %>% 
+  mutate(year = as.integer(year))
 
 write.csv(total_crime_df, "./data/total_crime.csv")
 ```
@@ -83,11 +84,56 @@ write.csv(census_df, "./data/census.csv")
 ```
 
 
-
+Read and tidy hiv data.
 ```{r}
 urlfile = "https://raw.githubusercontent.com/yw3436/p8105_final.github.io/main/data/hiv_complete.csv"
 
 hiv_df = 
   read.csv(url(urlfile))
+
+hiv_df =
+  hiv_df %>% 
+  filter(sex == "All",
+         sex_cat == "All",
+         race_cat == "All",
+         age_cat == "All",
+         risk_cat == "All") %>%
+  select(year, borough_cat, total_hiv_diag_N) %>% 
+  filter(!borough_cat %in% c("All", "Unknown borough", "Outside NYC")) %>% 
+  rename(borough = borough_cat)
+  
+```
+
+Join hiv_df, total_crime_df, and census_df
+
+```{r}
+hiv_crime =
+  left_join(hiv_df, total_crime_df, by = c("year", "borough"))
+
+hiv_crime = 
+  hiv_crime %>% 
+  left_join(census_df, by = "borough")
+
+hiv_crime = 
+  hiv_crime %>% 
+  mutate(
+    hiv_diag_rate_per_10k = (total_hiv_diag_N / population_2010) * 10000,
+    crime_rate_per_10k = (total_crime / population_2010) * 10000)
+
+```
+
+Make a plot
+
+```{r}
+hiv_crime %>% 
+  ggplot(aes(x = crime_rate_per_10k, y = hiv_diag_rate_per_10k, group = borough, color = borough)) +
+  geom_point()
+```
+
+plotly
+
+```{r}
+hiv_crime %>% 
+  plot_ly(x = ~crime_rate_per_10k, y = ~hiv_diag_rate_per_10k, color = ~borough, type = "scatter", mode = "markers", text = ~paste('Year: ', year))
 ```
 
